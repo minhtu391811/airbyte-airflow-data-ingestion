@@ -1,0 +1,174 @@
+services:
+  # PostgreSQL - Source
+  film_postgres:
+    image: postgres:15-alpine
+    container_name: film_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: film_db
+    ports:
+      - "5432:5432"
+    networks:
+      - ingestion_network
+    extra_hosts:
+     - "${HOST}:host-gateway"
+    volumes:
+      - ./film_postgres/:/docker-entrypoint-initdb.d
+    command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d film_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ticket_postgres:
+    image: postgres:15-alpine
+    container_name: ticket_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ticket_db
+    ports:
+      - "5433:5432"
+    networks:
+      - ingestion_network
+    extra_hosts:
+     - "${HOST}:host-gateway"
+    volumes:
+      - ./ticket_postgres/:/docker-entrypoint-initdb.d
+    command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ticket_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL - Destination
+  destination_postgres:
+    image: postgres:15-alpine
+    container_name: destination_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: destination_db
+    ports:
+      - "5434:5432"
+    networks:
+      - ingestion_network
+    depends_on:
+      - film_postgres
+      - ticket_postgres
+    extra_hosts:
+     - "${HOST}:host-gateway"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d destination_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Airflow - Metadata Database
+  airflow-db:
+    image: postgres:15-alpine
+    networks:
+      - ingestion_network
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+
+  # Airflow Init
+  airflow-init:
+    image: apache/airflow:2.8.1
+    container_name: airflow_init
+    depends_on:
+      - airflow-db
+    networks:
+      - ingestion_network
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
+    entrypoint: >
+      bash -c "
+      airflow db migrate &&
+      airflow users create --username airflow --password password --firstname Tu --lastname NguyenMinh --role Admin --email admin@example.com      "
+    restart: "no"
+    
+  # Airflow Webserver
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - airflow-db
+      - airflow-init
+    networks:
+      - ingestion_network
+    extra_hosts:
+      - "${HOST}:host-gateway"
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
+      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@destination_postgres:5432/destination_db
+      - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=
+      - AIRFLOW__WEBSERVER__DEFAULT_USER_USERNAME=airflow
+      - AIRFLOW__WEBSERVER__DEFAULT_USER_PASSWORD=password
+      - AIRFLOW_WWW_USER_USERNAME=airflow
+      - AIRFLOW_WWW_USER_PASSWORD=password
+      - AIRFLOW__WEBSERVER__SECRET_KEY=secret
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./postgres_transformations:/opt/dbt
+      - ~/.dbt:/root/.dbt
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - airflow-db
+      - airflow-init
+    networks:
+      - ingestion_network 
+    extra_hosts:
+      - "${HOST}:host-gateway"
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
+      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@destination_postgres:5432/destination_db
+      - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=
+      - AIRFLOW__WEBSERVER__SECRET_KEY=secret
+      - AIRFLOW_WWW_USER_USERNAME=airflow
+      - AIRFLOW_WWW_USER_PASSWORD=password
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./postgres_transformations:/opt/dbt
+      - ~/.dbt:/root/.dbt
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: scheduler
+    
+networks:
+  ingestion_network:
+    driver: bridge
+    external: true
+
+volumes:
+  postgres_data:
+  airflow_db_data:

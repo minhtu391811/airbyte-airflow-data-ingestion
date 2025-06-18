@@ -1,0 +1,1 @@
+{{ revenue_by_dimension('cinemas', 'cinema_id', 'name') }}
