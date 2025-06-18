@@ -1,6 +1,12 @@
 # Tối ưu Ingest bằng Airbyte OSS và Airflow
 
+Data Engineering - VDT 2025
+
 Đề tài nghiên cứu, thiết kế và triển khai hệ thống ingest dữ liệu sử dụng bộ công cụ Airbyte – Airflow
+
+Trong bối cảnh các hệ thống dữ liệu ngày càng trở nên phức tạp và yêu cầu đồng bộ hóa dữ liệu từ nhiều nguồn khác nhau một cách nhanh chóng, chính xác, việc lựa chọn công cụ phù hợp để thực hiện ingest và orchestration là yếu tố then chốt giúp nâng cao hiệu quả vận hành. Hệ thống hiện tại sử dụng kết hợp Apache NiFi cho ingest và Apache Airflow cho orchestration tuy đáp ứng được nhu cầu ban đầu nhưng dần bộc lộ những hạn chế trong việc mở rộng, bảo trì và đồng bộ logic luồng xử lý.
+
+Nhận thấy tiềm năng từ Airbyte – một nền tảng ingest hiện đại hỗ trợ nhiều nguồn dữ liệu, đồng bộ hóa theo thời gian thực (CDC), theo dõi schema và có khả năng tích hợp trực tiếp với Airflow, em thực hiện mini project này nhằm kiểm chứng tính khả thi và hiệu quả của giải pháp thay thế hiện tại bằng cặp công cụ Airbyte + Airflow.
 
 ## Yêu cầu hệ thống
 
@@ -24,7 +30,7 @@ source venv/bin/activate  # Hoặc: .\venv\Scripts\activate (Windows)
 pip install -r requirements.txt
 
 # Chạy toàn bộ stack (Airflow, Airbyte, Postgres nguồn & đích)
-bash ./start.sh
+bash start.sh
 ```
 
 ## Cấu hình kết nối trong Airflow
@@ -40,7 +46,7 @@ Chọn Admin/Connections
 - Client ID: 952f97d3-ee61-41ae-94d5-776cc63de7af
 - Client Secret: 8vkOQ6k5NOjOsokfw9TZ6rwdOIIr57O9
 
-### Tạo 3 kết nối PostgreSQL
+### Tạo kết nối PostgreSQL
 
 | Connection ID    | Host                  | Port | Schema       |
 |------------------|-----------------------|------|--------------|
@@ -77,8 +83,16 @@ Vào Airflow UI tại: http://localhost:8080
 | `dag_hourly_refresh`     | Trigger Full Refresh mỗi giờ     |
 | `dag_minutely_incremental` | Trigger CDC mỗi phút             |
 
+## Mô phỏng luồng dữ liệu
+
+Mỗi phút sinh 1 record mỗi bảng
+
+```bash
+python data_generator.py
+```
+
 ## Dừng hệ thống
 
 ```bash
-bash ./stop.sh
+bash stop.sh
 ```
