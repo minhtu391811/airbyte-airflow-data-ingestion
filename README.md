@@ -19,8 +19,8 @@ Nhận thấy tiềm năng từ Airbyte – một nền tảng ingest hiện đ�
 
 ```bash
 # Clone mã nguồn
-git clone https://github.com/your-org/airbyte-airflow-ingest.git
-cd airbyte-airflow-ingest
+git clone https://github.com/minhtu391811/airbyte-airflow-data-ingestion.git
+cd airbyte-airflow-data-ingestion
 
 # Tạo virtual environment
 python -m venv venv
