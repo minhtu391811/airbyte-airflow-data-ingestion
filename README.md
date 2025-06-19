@@ -11,6 +11,7 @@ Nhận thấy tiềm năng từ Airbyte – một nền tảng ingest hiện đ�
 ## Yêu cầu hệ thống
 
 - Docker + Docker Compose
+- Cài đặt Airbyte OSS: https://docs.airbyte.com/platform/using-airbyte/getting-started/oss-quickstart
 - Python 3.8+
 - Hệ điều hành Linux/macOS/Windows (hỗ trợ Docker Desktop)
 - RAM tối thiểu 4GB cho container
