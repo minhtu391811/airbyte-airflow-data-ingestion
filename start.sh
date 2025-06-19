@@ -4,4 +4,4 @@ docker network connect ingestion_network airbyte-abctl-control-plane
 
 docker compose up airflow-init
 
-docker compose up -d --build
+docker compose up -d
