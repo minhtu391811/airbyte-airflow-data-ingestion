@@ -111,7 +111,8 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - LOAD_EX=n
-      - EXECUTOR=Local
+      - EXECUTOR=Sequential
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
       - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://minhtus:Mop-391811@destination_postgres:5432/destination_db
       - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=
@@ -150,7 +151,8 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - LOAD_EX=n
-      - EXECUTOR=Local
+      - EXECUTOR=Sequential
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
       - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://minhtus:Mop-391811@destination_postgres:5432/destination_db
       - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=

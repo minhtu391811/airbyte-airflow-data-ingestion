@@ -9,7 +9,8 @@ CREATE TABLE users (
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     email VARCHAR(100),
-    date_of_birth DATE
+    date_of_birth DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE films (
@@ -18,23 +19,27 @@ CREATE TABLE films (
     release_date DATE,
     price DECIMAL(5,2),
     rating VARCHAR(10),
-    user_rating DECIMAL(2,1) CHECK (user_rating >= 1 AND user_rating <= 5)
+    user_rating DECIMAL(2,1) CHECK (user_rating >= 1 AND user_rating <= 5),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE film_category (
     category_id SERIAL PRIMARY KEY,
     film_id INTEGER REFERENCES films(film_id),
-    category_name VARCHAR(50) NOT NULL
+    category_name VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE actors (
     actor_id SERIAL PRIMARY KEY,
-    actor_name VARCHAR(255) NOT NULL
+    actor_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE film_actors (
     film_id INTEGER REFERENCES films(film_id),
     actor_id INTEGER REFERENCES actors(actor_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (film_id, actor_id)
 );
 

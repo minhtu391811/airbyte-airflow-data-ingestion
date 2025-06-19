@@ -10,7 +10,7 @@ fake = Faker()
 
 # Kết nối đến 2 database
 conn_1 = psycopg2.connect(
-    dbname="management_db",
+    dbname="film_db",
     user="minhtus",
     password="Mop-391811",
     host="localhost",

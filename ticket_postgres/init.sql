@@ -10,14 +10,16 @@ CREATE TABLE customers (
 CREATE TABLE cinemas (
     cinema_id SERIAL PRIMARY KEY,
     name VARCHAR(100),
-    location VARCHAR(255)
+    location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE showtimes (
     showtime_id SERIAL PRIMARY KEY,
     film_id INTEGER,
     cinema_id INTEGER REFERENCES cinemas(cinema_id),
-    show_time TIMESTAMP NOT NULL
+    show_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ticket_orders (
@@ -27,7 +29,8 @@ CREATE TABLE ticket_orders (
     number_of_tickets INTEGER NOT NULL,
     total_price DECIMAL(7,2) NOT NULL,
     order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    payment_status VARCHAR(20) CHECK (payment_status IN ('PAID', 'PENDING', 'CANCELLED'))
+    payment_status VARCHAR(20) CHECK (payment_status IN ('PAID', 'PENDING', 'CANCELLED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create a user for Airbyte connector

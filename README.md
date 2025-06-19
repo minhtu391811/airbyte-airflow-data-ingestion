@@ -50,9 +50,7 @@ Chọn Admin/Connections
 
 | Connection ID    | Host                  | Port | Schema       |
 |------------------|-----------------------|------|--------------|
-| `postgres_film`  | host.docker.internal  | 5432 | film_db      |
-| `postgres_ticket`| host.docker.internal  | 5433 | ticket_db    |
-| `postgres_dwh`   | host.docker.internal  | 5434 | destination_db |
+| `postgres_destination`   | host.docker.internal  | 5434 | destination_db |
 
 ## Tạo Connection trong Airbyte UI
 
