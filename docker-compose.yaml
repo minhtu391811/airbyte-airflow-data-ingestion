@@ -12,7 +12,7 @@ services:
     networks:
       - ingestion_network
     extra_hosts:
-     - "${HOST}:host-gateway"
+     - "host.docker.internal:host-gateway"
     volumes:
       - ./film_postgres/:/docker-entrypoint-initdb.d
     command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
@@ -34,7 +34,7 @@ services:
     networks:
       - ingestion_network
     extra_hosts:
-     - "${HOST}:host-gateway"
+     - "host.docker.internal:host-gateway"
     volumes:
       - ./ticket_postgres/:/docker-entrypoint-initdb.d
     command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
@@ -60,7 +60,7 @@ services:
       - film_postgres
       - ticket_postgres
     extra_hosts:
-     - "${HOST}:host-gateway"
+     - "host.docker.internal:host-gateway"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./destination_postgres/:/docker-entrypoint-initdb.d
@@ -108,7 +108,7 @@ services:
     networks:
       - ingestion_network
     extra_hosts:
-      - "${HOST}:host-gateway"
+      - "host.docker.internal:host-gateway"
     environment:
       - LOAD_EX=n
       - EXECUTOR=Local
@@ -147,7 +147,7 @@ services:
     networks:
       - ingestion_network 
     extra_hosts:
-      - "${HOST}:host-gateway"
+      - "host.docker.internal:host-gateway"
     environment:
       - LOAD_EX=n
       - EXECUTOR=Local

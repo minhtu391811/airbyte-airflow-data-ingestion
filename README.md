@@ -44,8 +44,7 @@ Chọn Admin/Connections
 - Connection ID: airbyte
 - Connection Type: Airbyte
 - Host: http://host.docker.internal:8000/api/public/v1/
-- Client ID: 952f97d3-ee61-41ae-94d5-776cc63de7af
-- Client Secret: 8vkOQ6k5NOjOsokfw9TZ6rwdOIIr57O9
+- Client ID, Client Secret: Airbyte UI - Setting - Applications
 
 ### Tạo kết nối PostgreSQL
 
