@@ -4,8 +4,8 @@ services:
     image: postgres:15-alpine
     container_name: film_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: minhtus
+      POSTGRES_PASSWORD: Mop-391811
       POSTGRES_DB: film_db
     ports:
       - "5432:5432"
@@ -17,7 +17,7 @@ services:
       - ./film_postgres/:/docker-entrypoint-initdb.d
     command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d film_db"]
+      test: ["CMD-SHELL", "pg_isready -U minhtus -d film_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,8 +26,8 @@ services:
     image: postgres:15-alpine
     container_name: ticket_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: minhtus
+      POSTGRES_PASSWORD: Mop-391811
       POSTGRES_DB: ticket_db
     ports:
       - "5433:5432"
@@ -39,7 +39,7 @@ services:
       - ./ticket_postgres/:/docker-entrypoint-initdb.d
     command: postgres -c listen_addresses='*' -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10 -c wal_keep_size=1GB
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ticket_db"]
+      test: ["CMD-SHELL", "pg_isready -U minhtus -d ticket_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,8 +49,8 @@ services:
     image: postgres:15-alpine
     container_name: destination_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER} 
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: minhtus 
+      POSTGRES_PASSWORD: Mop-391811
       POSTGRES_DB: destination_db
     ports:
       - "5434:5432"
@@ -66,7 +66,7 @@ services:
       - ./destination_postgres/:/docker-entrypoint-initdb.d
     command: postgres -c listen_addresses='*'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d destination_db"]
+      test: ["CMD-SHELL", "pg_isready -U minhtus -d destination_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -113,7 +113,7 @@ services:
       - LOAD_EX=n
       - EXECUTOR=Local
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
-      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@destination_postgres:5432/destination_db
+      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://minhtus:Mop-391811@destination_postgres:5432/destination_db
       - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=
       - AIRFLOW__WEBSERVER__DEFAULT_USER_USERNAME=airflow
       - AIRFLOW__WEBSERVER__DEFAULT_USER_PASSWORD=password
@@ -152,7 +152,7 @@ services:
       - LOAD_EX=n
       - EXECUTOR=Local
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-db/airflow
-      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@destination_postgres:5432/destination_db
+      - AIRFLOW_CONN_DESTINATION_POSTGRES=postgres://minhtus:Mop-391811@destination_postgres:5432/destination_db
       - AIRFLOW__CORE__FERNET_KEY=plIipb9RU3-3wJ1UNaAtqVNJrqFEks1-dGbJM34EW7U=
       - AIRFLOW__WEBSERVER__SECRET_KEY=secret
       - AIRFLOW_WWW_USER_USERNAME=airflow
